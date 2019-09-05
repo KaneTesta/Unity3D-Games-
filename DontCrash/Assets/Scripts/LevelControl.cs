@@ -10,14 +10,14 @@ public class LevelControl : MonoBehaviour
     private float[] rotationY = new float[] {0f,0f,90f,90f,180f,180f,270f,270f};
     private float startingY = 0.229f;
 
-    private float spawnIntervalMax = 3.0f;
-    private float spawnIntervalMin = 1.0f;
+    private float spawnIntervalMax = 1.5f;
+    private float spawnIntervalMin = 0.5f;
 
 
     //Car Prefabs
     public GameObject defaultCar;
     private bool readyToSpawn = true;
-    private Color[] carColor = new Color[] {new Color(0.02f,0.93f,1.0f,0.2f),new Color(0.14f,0.83f,0.19f,0.2f),new Color(0.78f,0.36f,0.34f,0.2f)};
+    private Color[] carColor = new Color[] {new Color(0.02f,0.93f,1.0f,0.2f),new Color(0.14f,0.83f,0.19f,0.2f),new Color(0.78f,0.36f,0.34f,0.2f), Color.yellow};
 
 
     //Game controls
@@ -49,9 +49,8 @@ public class LevelControl : MonoBehaviour
        
        // Change color of body of default car
         if (randomCarType == 0){
-            int randomCarColor = Random.Range(0,3);
+            int randomCarColor = Random.Range(0,4);
             foreach (Transform child in newCar.transform){
-
                 if (child.name == "Top" || child.name == "Bottom"){
                     child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
                 }

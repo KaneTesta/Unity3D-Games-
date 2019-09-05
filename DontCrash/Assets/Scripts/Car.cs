@@ -7,6 +7,7 @@ public class Car : MonoBehaviour
 
     //Level Controller
     private GameObject controller;
+    private GameObject SkidManager;
 
     //Car attributes that are altered as time goes on
     public float speedMultiplier = 1.0f;
@@ -15,17 +16,28 @@ public class Car : MonoBehaviour
     private int mapWidth = 20;
 
     // Global car attributes
-    private int speed = 5;
+    private float speed;
+    private int initSpeed = 7;
     private bool cantStop = false; // for cars that never can be stopped so player must prioritise getting them through
     private int zCoEff;
     private int xCoEff;
     private float initX;
     private float initZ;
 
+    //Controls
+    private float boostVal = 15f;
+    private bool speedingUp = false;
+    
+    private float stoppedTimer = 0.0f;
+    private bool stoppedCar = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        speed = initSpeed;
         controller = GameObject.Find("LevelController");
+        SkidManager = GameObject.Find("SkidManager");
         zCoEff = zDirection(this.transform.eulerAngles);
         xCoEff = xDirection(this.transform.eulerAngles);
         initX = this.transform.position.x;
@@ -40,6 +52,8 @@ public class Car : MonoBehaviour
         newPos.z = newPos.z + zCoEff*speed*speedMultiplier*Time.deltaTime;
         this.transform.position = newPos;
 
+        StoppedCheck();
+        SpeedManager();
         killCheck();
     }
 
@@ -92,6 +106,57 @@ public class Car : MonoBehaviour
 
     void addPoint(){
         controller.GetComponent<LevelControl>().score += 1;
+    }
+
+    void OnMouseOver () {
+        if (Input.GetMouseButtonDown(0)) {
+            speedingUp = true;
+            stoppedCar = false;
+        }
+        if (Input.GetMouseButtonDown(1)) {
+            stoppedTimer = 0.0f;
+            stoppedCar = true;
+            speedingUp = false;
+        }
+    }
+
+    void SpeedManager() {
+        //If car is stopped
+        if (stoppedCar && speed > 0){
+            speed -= 0.5f;
+            SkidManager.GetComponent<SkidManage>().addSkid(this.gameObject);
+        } 
+
+        //If car is boosted and speeding up
+        else if ((speed < initSpeed + boostVal) && speedingUp){
+            speed += 0.5f;
+        } 
+
+        //if car is slowing after boost
+        else if (speed > initSpeed){
+            speed -= 0.5f;
+            speedingUp = false;
+        }
+    }
+
+    void StoppedCheck() {
+        if (stoppedCar){
+            stoppedTimer += Time.deltaTime;
+        }
+
+        if (stoppedTimer > 3.0f && stoppedCar){
+            stoppedCar = false;
+            speedingUp = true;
+        }
+    }
+
+    void OnCollisionEnter(Collision collisionInfo){
+
+        if (collisionInfo.collider.name.Contains("Car")){
+            stoppedCar = true;
+            speed = 0;
+            enabled = false;
+        }
     }
 
 }
