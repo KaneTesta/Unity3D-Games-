@@ -52,9 +52,24 @@ public class Car : MonoBehaviour
         newPos.z = newPos.z + zCoEff*speed*speedMultiplier*Time.deltaTime;
         this.transform.position = newPos;
 
+        WheelRotate();
         StoppedCheck();
         SpeedManager();
         killCheck();
+    }
+
+    void WheelRotate(){
+        foreach (Transform child in this.transform){
+            if (child.name == "Wheels"){
+                foreach(Transform child2 in child.transform){
+                    if (child2.name == "Wheel"){
+                        Vector3 rot = child2.rotation.eulerAngles;
+                        rot.z += Time.deltaTime * 500 * speed;
+                        child2.rotation = Quaternion.Euler(rot);
+                    }
+                }
+            }
+        }
     }
 
     int zDirection(Vector3 rot){
@@ -113,7 +128,8 @@ public class Car : MonoBehaviour
             speedingUp = true;
             stoppedCar = false;
         }
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButtonDown(1) && cantStop == false) {
+            Debug.Log(cantStop);
             stoppedTimer = 0.0f;
             stoppedCar = true;
             speedingUp = false;
