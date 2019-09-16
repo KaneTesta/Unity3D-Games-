@@ -32,14 +32,14 @@ public class PauseMenu : MonoBehaviour
 
     public void Restart(){
         Resume();
-        SceneManager.LoadScene("Main");
+        GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
     }
 
 
     public void Exit(){
         pauseMenuUI.SetActive(false);
         gameIsPaused = false;
-        SceneManager.LoadScene("Main");
+        GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
         this.GetComponent<MainMenu>().ShowMenu();
     }
 }

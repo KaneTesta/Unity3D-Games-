@@ -15,7 +15,7 @@ public class MainMenu: MonoBehaviour
 
     public void Start(){
         float timer = 0.15f;
-        InvokeRepeating("ColorChange", timer, timer);
+        InvokeRepeating("ColorChange", 0f, timer);
     }
 
     //Change Colour Gradient to resemble police sirens
@@ -38,9 +38,8 @@ public class MainMenu: MonoBehaviour
 
     public void StartGame(){
         MenuUI.SetActive(false);
-        ControlsUI.SetActive(false);
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Main");
+        GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
     }
 
     public void ShowMenu(){

@@ -17,4 +17,12 @@ public class SkidManage : MonoBehaviour
             }
         }
     }
+
+    public void addParticles(GameObject car){
+        foreach (Transform child in car.transform){
+            if (child.name.Contains("Trail")){
+                child.gameObject.SetActive(true);
+            }
+        }
+    }
 }

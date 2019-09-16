@@ -8,6 +8,7 @@ public class CopCar : MonoBehaviour
     //Level Controller
     private GameObject controller;
     private GameObject SkidManager;
+    private bool gameOver = false;
 
     //Car attributes that are altered as time goes on
     public float speedMultiplier = 1.0f;
@@ -99,37 +100,32 @@ public class CopCar : MonoBehaviour
         if (xCoEff == 1){
             if (this.transform.position.x > initX + mapWidth){
                 Destroy(this.gameObject);
-                addPoint();
+                controller.GetComponent<LevelControl>().addPoint();
             }
         } else if (xCoEff == -1){
             if (this.transform.position.x < initX - mapWidth){
                 Destroy(this.gameObject);
-                addPoint();
+                controller.GetComponent<LevelControl>().addPoint();
             }
         } else if (zCoEff == 1){
             if (this.transform.position.z > initZ + mapWidth){
                 Destroy(this.gameObject);
-                addPoint();
+                controller.GetComponent<LevelControl>().addPoint();
             }
         } else if (zCoEff == -1){
             if (this.transform.position.z < initZ - mapWidth){
                 Destroy(this.gameObject);
-                addPoint();
+                controller.GetComponent<LevelControl>().addPoint();
             }
         }
     }
-
-    void addPoint(){
-        controller.GetComponent<LevelControl>().score += 1;
-    }
-
     void OnMouseOver () {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !gameOver) {
             speedingUp = true;
             stoppedCar = false;
+            SkidManager.GetComponent<SkidManage>().addParticles(this.gameObject);
         }
         if (Input.GetMouseButtonDown(1) && cantStop == false) {
-            Debug.Log(cantStop);
             stoppedTimer = 0.0f;
             stoppedCar = true;
             speedingUp = false;
@@ -166,12 +162,25 @@ public class CopCar : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collisionInfo){
 
+    void OnCollisionEnter(Collision collisionInfo){
+        bool collided = false;
         if (collisionInfo.collider.name.Contains("Car")){
+            collided = true;
+        }
+        if (collisionInfo.collider.name.Contains("Truck")){
+            collided = true;
+        }
+        if (collisionInfo.collider.name.Contains("Police")){
+            collided = true;
+        }
+        
+        if (collided == true){
             stoppedCar = true;
             speed = 0;
             enabled = false;
+            gameOver = true;
+            controller.GetComponent<LevelControl>().GameOver();
         }
     }
 

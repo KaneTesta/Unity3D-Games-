@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelControl : MonoBehaviour
 {
@@ -8,10 +7,10 @@ public class LevelControl : MonoBehaviour
     private float[] startingX = new float[] {-0.4f, -1.2f, -9.9f, -9.9f, 0.4f, 1.2f, 9.9f, 9.9f};
     private float[] startingZ = new float[] {-11.0f, -11.0f, 0.4f, 1.27f, 11.0f, 11.0f, -1.27f, -0.4f};
     private float[] rotationY = new float[] {0f,0f,90f,90f,180f,180f,270f,270f};
-    private float startingY = 0.265f;
+    private float startingY = 0.5f;
 
-    private float spawnIntervalMax = 1.5f;
-    private float spawnIntervalMin = 0.5f;
+    private float spawnIntervalMax = 3f;
+    private float spawnIntervalMin = 2f;
 
 
     //Car Prefabs
@@ -24,15 +23,40 @@ public class LevelControl : MonoBehaviour
 
     //Game controls
     public int score = 0;
+    public bool gameOver = false;
+    public Text scoreText;
+
+    void Start(){
+        InvokeRepeating("IncreaseFrequency", 0f ,3f);
+    }
 
 
     void Update()
     {
+        if (GameObject.Find("MainMenu") == null && GameObject.Find("PauseMenu") == null && GameObject.Find("ControlsMenu") == null){
+            scoreText.gameObject.SetActive(true);
+        } else {
+            scoreText.gameObject.SetActive(false);
+        }
+
+
         if (readyToSpawn)
         {
             float timer = Random.Range(spawnIntervalMin, spawnIntervalMax);
             Invoke("SpawnCar", timer);
             readyToSpawn = false;
+        }
+
+    }
+
+    //Increase frequency of car spawn
+    void IncreaseFrequency(){
+        if (spawnIntervalMin > 0.25f){
+            spawnIntervalMin -= 0.1f;
+        }
+
+        if (spawnIntervalMax > 1f){
+            spawnIntervalMax -= 0.1f;
         }
     }
 
@@ -72,5 +96,36 @@ public class LevelControl : MonoBehaviour
        
         readyToSpawn = true;
 
+    }
+
+    public void addPoint(){
+        if (gameOver == false){
+            score += 1;
+            scoreText.text = score.ToString();
+        }
+    }
+
+    //Do this when the game is done
+    public void GameOver(){
+        gameOver = true;
+
+        // Game Over Screen
+        GameObject gameOverController = GameObject.Find("MenuControllers");
+        gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
+
+        // Check if High Score
+    }
+
+    public void ResetGame(){
+        score = 0;
+        scoreText.text = score.ToString();
+        spawnIntervalMax = 3f;
+        spawnIntervalMin = 2f;
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
+        foreach(GameObject go in allObjects){
+            if (go.name.Contains("Clone")){
+                Destroy(go);
+            }
+        }
     }
 }
