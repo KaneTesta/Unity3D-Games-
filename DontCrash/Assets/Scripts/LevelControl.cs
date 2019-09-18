@@ -82,8 +82,10 @@ public class LevelControl : MonoBehaviour
                     child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
                 }
             }
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCar);
         } else if (randomCarType <= 8){
             GameObject newCop = Instantiate(copCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCop);
         } else if (randomCarType <= 10){
             int randomCarColor = Random.Range(0,4);
             GameObject truck = Instantiate(largeCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
@@ -92,8 +94,8 @@ public class LevelControl : MonoBehaviour
                     child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
                 }
             }
+             GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(truck);
         }
-       
         readyToSpawn = true;
 
     }
@@ -107,13 +109,15 @@ public class LevelControl : MonoBehaviour
 
     //Do this when the game is done
     public void GameOver(){
-        gameOver = true;
+        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false){
+            gameOver = true;
 
-        // Game Over Screen
-        GameObject gameOverController = GameObject.Find("MenuControllers");
-        gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
+            // Game Over Screen
+            GameObject gameOverController = GameObject.Find("MenuControllers");
+            gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
 
-        // Check if High Score
+            // Check if High Score
+        }
     }
 
     public void ResetGame(){
@@ -121,6 +125,7 @@ public class LevelControl : MonoBehaviour
         scoreText.text = score.ToString();
         spawnIntervalMax = 3f;
         spawnIntervalMin = 2f;
+        gameOver = false;
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
         foreach(GameObject go in allObjects){
             if (go.name.Contains("Clone")){

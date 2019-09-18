@@ -126,11 +126,13 @@ public class Truck : MonoBehaviour
             speedingUp = true;
             stoppedCar = false;
             SkidManager.GetComponent<SkidManage>().addParticles(this.gameObject);
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().RevSound(this.gameObject);      
         }
         if (Input.GetMouseButtonDown(1) && cantStop == false) {
             stoppedTimer = 0.0f;
             stoppedCar = true;
             speedingUp = false;
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().SkidSound(this.gameObject);
         }
     }
 
@@ -183,6 +185,8 @@ public class Truck : MonoBehaviour
             enabled = false;
             gameOver = true;
             controller.GetComponent<LevelControl>().GameOver();
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().CrashSound(this.gameObject); 
+
         }
     }
 
