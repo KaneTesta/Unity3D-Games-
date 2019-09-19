@@ -24,6 +24,7 @@ public class CopCar : MonoBehaviour
     private int xCoEff;
     private float initX;
     private float initZ;
+    public Light[] lights;
 
     //Controls
     private float boostVal = 15f;
@@ -31,6 +32,8 @@ public class CopCar : MonoBehaviour
     
     private float stoppedTimer = 0.0f;
     private bool stoppedCar = false;
+    private bool haveHonked = false;
+
 
 
     // Start is called before the first frame update
@@ -43,6 +46,10 @@ public class CopCar : MonoBehaviour
         xCoEff = xDirection(this.transform.eulerAngles);
         initX = this.transform.position.x;
         initZ = this.transform.position.z;
+
+        if (GameObject.Find("LevelController").GetComponent<LevelControl>().nightMode){
+            SkidManager.GetComponent<SkidManage>().headLightsOn(this.gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -57,6 +64,18 @@ public class CopCar : MonoBehaviour
         StoppedCheck();
         SpeedManager();
         killCheck();
+        rotateLights();
+    }
+
+    void rotateLights(){
+        foreach (Light s in lights){
+            Quaternion rotation = s.transform.rotation;
+            if (s.name.Contains("1")){
+                s.transform.Rotate(0,5,0);
+            } else {
+                s.transform.Rotate(0,5,0);
+            }
+        }
     }
 
     void WheelRotate(){
@@ -121,18 +140,27 @@ public class CopCar : MonoBehaviour
     }
     void OnMouseOver () {
         if (Input.GetMouseButtonDown(0) && !gameOver) {
+            if (speedingUp == false){
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().RevSound(this.gameObject);
+            }
             speedingUp = true;
             stoppedCar = false;
             SkidManager.GetComponent<SkidManage>().addParticles(this.gameObject);
-            GameObject.Find("AudioManager").GetComponent<AudioManager>().RevSound(this.gameObject); 
+            SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
         }
         if (Input.GetMouseButtonDown(1) && cantStop == false) {
+            if (stoppedCar == false){
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().SkidSound(this.gameObject);
+            }
             stoppedTimer = 0.0f;
             stoppedCar = true;
             speedingUp = false;
-            GameObject.Find("AudioManager").GetComponent<AudioManager>().SkidSound(this.gameObject);
+            haveHonked = false;
+            SkidManager.GetComponent<SkidManage>().brakeLightsOn(this.gameObject);
+
         }
     }
+
 
     void SpeedManager() {
         //If car is stopped
@@ -158,9 +186,16 @@ public class CopCar : MonoBehaviour
             stoppedTimer += Time.deltaTime;
         }
 
+        if (stoppedTimer > 2.0f && !haveHonked){
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(this.gameObject); 
+            haveHonked = true;
+        }
+
+
         if (stoppedTimer > 3.0f && stoppedCar){
             stoppedCar = false;
             speedingUp = true;
+            SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
         }
     }
 

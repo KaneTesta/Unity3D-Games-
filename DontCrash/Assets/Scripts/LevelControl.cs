@@ -25,6 +25,7 @@ public class LevelControl : MonoBehaviour
     public int score = 0;
     public bool gameOver = false;
     public Text scoreText;
+    public bool nightMode = false;
 
     void Start(){
         InvokeRepeating("IncreaseFrequency", 0f ,3f);
@@ -62,42 +63,53 @@ public class LevelControl : MonoBehaviour
 
     void SpawnCar()
     {
-        //Car starting position, salt is so they dont follow the same track
-        int rand = UnityEngine.Random.Range(0,8);
-        float salt = Random.Range(-0.1f,0.1f);
+        if (vehicleCount() < 20){
+            //Car starting position, salt is so they dont follow the same track
+            int rand = UnityEngine.Random.Range(0,8);
+            float salt = Random.Range(-0.1f,0.1f);
 
-        //Random car type
-        int randomCarType = Random.Range(0,11);       
+            //Random car type
+            int randomCarType = Random.Range(0,11);       
+            
+            Quaternion direction = Quaternion.identity;
+            direction.eulerAngles = new Vector3(0,rotationY[rand],0);
+
         
-        Quaternion direction = Quaternion.identity;
-        direction.eulerAngles = new Vector3(0,rotationY[rand],0);
-
-       
-       // Change color of body of default car
-        if (randomCarType <= 6){
-            GameObject newCar = Instantiate(defaultCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-            int randomCarColor = Random.Range(0,4);
-            foreach (Transform child in newCar.transform){
-                if (child.name == "Top" || child.name == "Bottom"){
-                    child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
+            // Change color of body of default car
+            if (randomCarType <= 6){
+                GameObject newCar = Instantiate(defaultCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+                int randomCarColor = Random.Range(0,4);
+                foreach (Transform child in newCar.transform){
+                    if (child.name == "Top" || child.name == "Bottom"){
+                        child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
+                    }
+                }
+            } else if (randomCarType <= 8){
+                GameObject newCop = Instantiate(copCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCop);
+            } else if (randomCarType <= 10){
+                int randomCarColor = Random.Range(0,4);
+                GameObject truck = Instantiate(largeCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+                foreach (Transform child in truck.transform){
+                    if (child.name == "Top" || child.name == "Bottom"){
+                        child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
+                    }
                 }
             }
-            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCar);
-        } else if (randomCarType <= 8){
-            GameObject newCop = Instantiate(copCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCop);
-        } else if (randomCarType <= 10){
-            int randomCarColor = Random.Range(0,4);
-            GameObject truck = Instantiate(largeCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-            foreach (Transform child in truck.transform){
-                if (child.name == "Top" || child.name == "Bottom"){
-                    child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
-                }
-            }
-             GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(truck);
+            readyToSpawn = true;
         }
-        readyToSpawn = true;
 
+    }
+
+    private int vehicleCount(){
+        int count = 0;
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+        foreach(GameObject go in allObjects){
+            if (go.name.Contains("Car")||go.name.Contains("Truck")){
+                count += 1;
+            }
+        }
+        return count;
     }
 
     public void addPoint(){

@@ -25,4 +25,43 @@ public class SkidManage : MonoBehaviour
             }
         }
     }
+    //Turn on brake spotlight
+    public void brakeLightsOn(GameObject car){
+        GameObject lights = car.transform.Find("BrakeLights").gameObject;
+        foreach (Transform child in lights.transform){
+            foreach(Transform spotlight in child.transform){
+                spotlight.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    //Turn on brake spotlight
+    public void brakeLightsOff(GameObject car){
+        GameObject lights = car.transform.Find("BrakeLights").gameObject;
+        foreach (Transform child in lights.transform){
+            foreach(Transform spotlight in child.transform){
+                spotlight.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void headLightsOn(GameObject car){
+        GameObject lights = car.transform.Find("Headlights").gameObject;
+        foreach (Transform child in lights.transform){
+            foreach(Transform spotlight in child.transform){
+                spotlight.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    //Turn on brake spotlight
+    public void headLightsOff(GameObject car){
+        GameObject lights = car.transform.Find("Headlights").gameObject;
+        Debug.Log(lights);
+        foreach (Transform child in lights.transform){
+            foreach(Transform spotlight in child.transform){
+                spotlight.gameObject.SetActive(false);
+            }
+        }
+    }
 }
