@@ -30,6 +30,10 @@ public class MainMenu: MonoBehaviour
 
     }
 
+    public void ResetHighScore(){
+        PlayerPrefs.SetInt("HighScore",0);
+    }
+
     public void Controls(){
         MenuUI.SetActive(false);
         ControlsUI.SetActive(true);

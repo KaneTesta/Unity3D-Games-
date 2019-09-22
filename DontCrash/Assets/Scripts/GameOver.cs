@@ -48,8 +48,10 @@ public class GameOver: MonoBehaviour
         int points = levelControl.GetComponent<LevelControl>().score;
         
         score.text = "Your score was " + points.ToString();
-
-        if (points > 100){
+        if (points > PlayerPrefs.GetInt("HighScore",0)){
+            score.text += ". You beat your high score!";
+            PlayerPrefs.SetInt("HighScore", points);
+        } else if (points > 100){
             score.text += ". Wow! You're great at this.";
         } else if (points > 75) {
             score.text += ". Great!";

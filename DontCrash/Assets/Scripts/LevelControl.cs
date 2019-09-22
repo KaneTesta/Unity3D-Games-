@@ -23,6 +23,7 @@ public class LevelControl : MonoBehaviour
 
     //Game controls
     public int score = 0;
+    public int highScore;
     public bool gameOver = false;
     public Text scoreText;
     public bool nightMode = false;
@@ -47,6 +48,7 @@ public class LevelControl : MonoBehaviour
             Invoke("SpawnCar", timer);
             readyToSpawn = false;
         }
+
 
     }
 
@@ -117,18 +119,21 @@ public class LevelControl : MonoBehaviour
             score += 1;
             scoreText.text = score.ToString();
         }
+
+        if (score > highScore){
+            scoreText.color = Color.green;
+        }
     }
 
     //Do this when the game is done
     public void GameOver(){
-        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false){
+
+        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false && gameOver == false){
             gameOver = true;
 
             // Game Over Screen
             GameObject gameOverController = GameObject.Find("MenuControllers");
             gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
-
-            // Check if High Score
         }
     }
 
@@ -144,5 +149,7 @@ public class LevelControl : MonoBehaviour
                 Destroy(go);
             }
         }
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        scoreText.color = Color.white;
     }
 }

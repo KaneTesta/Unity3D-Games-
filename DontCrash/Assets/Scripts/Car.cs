@@ -46,6 +46,7 @@ public class Car : MonoBehaviour
         initX = this.transform.position.x;
         initZ = this.transform.position.z;
 
+
         if (GameObject.Find("LevelController").GetComponent<LevelControl>().nightMode){
             SkidManager.GetComponent<SkidManage>().headLightsOn(this.gameObject);
         }
