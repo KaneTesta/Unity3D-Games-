@@ -8,6 +8,7 @@ public class Truck : MonoBehaviour
     //Level Controller
     private GameObject controller;
     private GameObject SkidManager;
+    private GameObject sparks;
     private bool gameOver;
 
 
@@ -42,6 +43,7 @@ public class Truck : MonoBehaviour
         speed = initSpeed;
         controller = GameObject.Find("LevelController");
         SkidManager = GameObject.Find("SkidManager");
+        sparks = GameObject.Find("Sparks");
         zCoEff = zDirection(this.transform.eulerAngles);
         xCoEff = xDirection(this.transform.eulerAngles);
         initX = this.transform.position.x;
@@ -205,6 +207,12 @@ public class Truck : MonoBehaviour
             gameOver = true;
             controller.GetComponent<LevelControl>().GameOver();
             GameObject.Find("AudioManager").GetComponent<AudioManager>().CrashSound(this.gameObject); 
+
+            //Spawn Particle System
+            ContactPoint collisionPoint = collisionInfo.contacts[0];
+            GameObject s2 = Instantiate(sparks, collisionPoint.point, new Quaternion(0,0,0,0));
+            s2.SetActive(true);
+            s2.GetComponent<ParticleSystem>().Play();
 
         }
     }

@@ -55,11 +55,11 @@ public class LevelControl : MonoBehaviour
     //Increase frequency of car spawn
     void IncreaseFrequency(){
         if (spawnIntervalMin > 0.25f){
-            spawnIntervalMin -= 0.1f;
+            spawnIntervalMin -= 0.05f;
         }
 
         if (spawnIntervalMax > 1f){
-            spawnIntervalMax -= 0.1f;
+            spawnIntervalMax -= 0.05f;
         }
     }
 
@@ -128,12 +128,12 @@ public class LevelControl : MonoBehaviour
     //Do this when the game is done
     public void GameOver(){
 
-        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false && gameOver == false){
+        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false && gameOver == false && GameObject.Find("MenuControllers").GetComponent<MainMenu>().ControlsUI.activeSelf == false){
             gameOver = true;
 
             // Game Over Screen
             GameObject gameOverController = GameObject.Find("MenuControllers");
-            gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
+            StartCoroutine(gameOverController.GetComponent<GameOver>().ShowGameOverMenu());
         }
     }
 

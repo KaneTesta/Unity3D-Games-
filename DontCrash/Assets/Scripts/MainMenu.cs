@@ -6,6 +6,7 @@ public class MainMenu: MonoBehaviour
 {
     public GameObject MenuUI;
     public GameObject ControlsUI;
+    public GameObject Tutorial;
 
     private Color red = Color.red;
     private Color blue = new Color(0.03f,0.6f,1f,1f);
@@ -31,7 +32,7 @@ public class MainMenu: MonoBehaviour
     }
 
     public void ResetHighScore(){
-        PlayerPrefs.SetInt("HighScore",0);
+        PlayerPrefs.DeleteAll();
     }
 
     public void Controls(){
@@ -44,6 +45,10 @@ public class MainMenu: MonoBehaviour
         MenuUI.SetActive(false);
         Time.timeScale = 1f;
         GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
+        if (PlayerPrefs.GetInt("TutorialDone", 0) == 0){
+            PlayerPrefs.SetInt("TutorialDone", 1);
+            Tutorial.SetActive(true);
+        }
     }
 
     public void ShowMenu(){

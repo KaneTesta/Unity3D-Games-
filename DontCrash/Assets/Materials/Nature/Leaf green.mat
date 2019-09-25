@@ -77,5 +77,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.34117648, g: 0.7254902, b: 0.5019608, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainTint: {r: 0.34117648, g: 0.7254902, b: 0.5019608, a: 1}
+    - _MainTint: {r: 0.083303675, g: 0.4528302, b: 0.23790152, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}

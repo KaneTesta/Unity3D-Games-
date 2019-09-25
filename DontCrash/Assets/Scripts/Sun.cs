@@ -15,7 +15,7 @@ public class Sun : MonoBehaviour
             GameObject.Find("LevelController").GetComponent<LevelControl>().nightMode = true;
         }
 
-        if (!nightMode && transform.position.y > 0){
+        if (nightMode && transform.position.y > 0){
             GameObject.Find("LevelController").GetComponent<LevelControl>().nightMode = false;
         }
     }

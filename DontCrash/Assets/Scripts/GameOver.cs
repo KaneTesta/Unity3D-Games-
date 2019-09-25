@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameOver: MonoBehaviour
 {
@@ -42,7 +43,10 @@ public class GameOver: MonoBehaviour
         GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
     }
 
-    public void ShowGameOverMenu(){
+    public IEnumerator ShowGameOverMenu(){
+        
+        yield return new WaitForSeconds(5);
+
         GameOverUI.SetActive(true);
         GameObject levelControl = GameObject.Find("LevelController");
         int points = levelControl.GetComponent<LevelControl>().score;
