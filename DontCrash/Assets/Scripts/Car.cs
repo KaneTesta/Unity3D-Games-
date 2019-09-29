@@ -9,6 +9,7 @@ public class Car : MonoBehaviour
     private GameObject controller;
     private GameObject SkidManager;
     private GameObject sparks;
+    private GameObject ex;
     private bool gameOver;
 
     //Car attributes that are altered as time goes on
@@ -104,29 +105,14 @@ public class Car : MonoBehaviour
 
     //Kill car when out of bounds and add point
     void killCheck(){
-        
-        if (xCoEff == 1){
-            if (this.transform.position.x > initX + mapWidth){
-                Destroy(this.gameObject);
-                controller.GetComponent<LevelControl>().addPoint();
-            }
-        } else if (xCoEff == -1){
-            if (this.transform.position.x < initX - mapWidth){
-                Destroy(this.gameObject);
-                controller.GetComponent<LevelControl>().addPoint();
-            }
-        } else if (zCoEff == 1){
-            if (this.transform.position.z > initZ + mapWidth){
-                Destroy(this.gameObject);
-                controller.GetComponent<LevelControl>().addPoint();
-            }
-        } else if (zCoEff == -1){
-            if (this.transform.position.z < initZ - mapWidth){
+        if (this.GetComponent<AudioSource>().isPlaying == false){
+            if (this.transform.position.y < 0f){
                 Destroy(this.gameObject);
                 controller.GetComponent<LevelControl>().addPoint();
             }
         }
     }
+
     void OnMouseOver () {
         if (Input.GetMouseButtonDown(0) && !gameOver) {
             if (speedingUp == false){
@@ -136,7 +122,9 @@ public class Car : MonoBehaviour
             stoppedCar = false;
             SkidManager.GetComponent<SkidManage>().addParticles(this.gameObject);
             SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
-
+            if (ex != null){
+                Destroy(ex);
+            }
         }
         if (Input.GetMouseButtonDown(1) && cantStop == false) {
             if (stoppedCar == false){
@@ -147,7 +135,6 @@ public class Car : MonoBehaviour
             speedingUp = false;
             haveHonked = false;
             SkidManager.GetComponent<SkidManage>().brakeLightsOn(this.gameObject);
-
         }
     }
 
@@ -184,6 +171,9 @@ public class Car : MonoBehaviour
         if (stoppedTimer > 2.0f && !haveHonked){
             GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(this.gameObject); 
             haveHonked = true;
+            if (this.transform.Find("Top").Find("Exclamation(Clone)") == null){
+                ex = Instantiate(controller.GetComponent<LevelControl>().exclamationMark, this.transform.Find("Top"), false); 
+            }
         }
 
 
@@ -191,6 +181,7 @@ public class Car : MonoBehaviour
             stoppedCar = false;
             speedingUp = true;
             SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
+            Destroy(ex);
         }
     }
 
@@ -220,7 +211,7 @@ public class Car : MonoBehaviour
             GameObject s2 = Instantiate(sparks, collisionPoint.point, new Quaternion(0,0,0,0));
             s2.SetActive(true);
             s2.GetComponent<ParticleSystem>().Play();
+            controller.GetComponent<LevelControl>().cameraShake();
         }
     }
-
 }

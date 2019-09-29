@@ -116,30 +116,14 @@ public class CopCar : MonoBehaviour
 
     //Kill car when out of bounds and add point
     void killCheck(){
-        //ADD GLOBAL POINT ADDITION TO LEVEL CONTROLLER
-        
-        if (xCoEff == 1){
-            if (this.transform.position.x > initX + mapWidth){
-                Destroy(this.gameObject);
-                controller.GetComponent<LevelControl>().addPoint();
-            }
-        } else if (xCoEff == -1){
-            if (this.transform.position.x < initX - mapWidth){
-                Destroy(this.gameObject);
-                controller.GetComponent<LevelControl>().addPoint();
-            }
-        } else if (zCoEff == 1){
-            if (this.transform.position.z > initZ + mapWidth){
-                Destroy(this.gameObject);
-                controller.GetComponent<LevelControl>().addPoint();
-            }
-        } else if (zCoEff == -1){
-            if (this.transform.position.z < initZ - mapWidth){
+        if (this.GetComponent<AudioSource>().isPlaying == false){
+            if (this.transform.position.y < 0f){
                 Destroy(this.gameObject);
                 controller.GetComponent<LevelControl>().addPoint();
             }
         }
     }
+
     void OnMouseOver () {
         if (Input.GetMouseButtonDown(0) && !gameOver) {
             if (speedingUp == false){
@@ -227,7 +211,7 @@ public class CopCar : MonoBehaviour
             GameObject s2 = Instantiate(sparks, collisionPoint.point, new Quaternion(0,0,0,0));
             s2.SetActive(true);
             s2.GetComponent<ParticleSystem>().Play();
-        
+            controller.GetComponent<LevelControl>().cameraShake();
         }
     }
 

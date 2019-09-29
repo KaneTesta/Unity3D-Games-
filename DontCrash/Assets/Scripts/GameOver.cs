@@ -43,10 +43,8 @@ public class GameOver: MonoBehaviour
         GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
     }
 
-    public IEnumerator ShowGameOverMenu(){
+    public void ShowGameOverMenu(){
         
-        yield return new WaitForSeconds(5);
-
         GameOverUI.SetActive(true);
         GameObject levelControl = GameObject.Find("LevelController");
         int points = levelControl.GetComponent<LevelControl>().score;

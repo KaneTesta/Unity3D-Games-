@@ -17,6 +17,7 @@ public class LevelControl : MonoBehaviour
     public GameObject defaultCar;
     public GameObject copCar;
     public GameObject largeCar;
+    public GameObject exclamationMark;
     private bool readyToSpawn = true;
     private Color[] carColor = new Color[] {new Color(0.02f,0.93f,1.0f,0.2f),new Color(0.14f,0.83f,0.19f,0.2f),new Color(0.78f,0.36f,0.34f,0.2f), Color.yellow};
 
@@ -133,7 +134,7 @@ public class LevelControl : MonoBehaviour
 
             // Game Over Screen
             GameObject gameOverController = GameObject.Find("MenuControllers");
-            StartCoroutine(gameOverController.GetComponent<GameOver>().ShowGameOverMenu());
+            gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
         }
     }
 
@@ -152,4 +153,9 @@ public class LevelControl : MonoBehaviour
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         scoreText.color = Color.white;
     }
+
+    public void cameraShake(){
+        StartCoroutine(GameObject.Find("CameraAnchor").GetComponent<CameraShake>().Shake(0.15f, 1f));
+    }
+
 }
