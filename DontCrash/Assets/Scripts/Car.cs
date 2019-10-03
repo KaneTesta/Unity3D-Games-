@@ -15,9 +15,6 @@ public class Car : MonoBehaviour
     //Car attributes that are altered as time goes on
     public float speedMultiplier = 1.0f;
 
-    //Map attributes
-    private int mapWidth = 20;
-
     // Global car attributes
     private float speed;
     private int initSpeed = 7;
@@ -144,8 +141,11 @@ public class Car : MonoBehaviour
 
 
     void SpeedManager() {
-        //If car is stopped
-        if (stoppedCar && speed > 0){
+
+        if (stoppedCar && gameOver && speed == 0){
+            enabled = false;
+        }
+        else if (stoppedCar && speed > 0){
             speed -= 0.5f;
             SkidManager.GetComponent<SkidManage>().addSkid(this.gameObject);
         } 
@@ -164,24 +164,26 @@ public class Car : MonoBehaviour
     }
 
     void StoppedCheck() {
-        if (stoppedCar){
-            stoppedTimer += Time.deltaTime;
-        }
-
-        if (stoppedTimer > 2.0f && !haveHonked){
-            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(this.gameObject); 
-            haveHonked = true;
-            if (this.transform.Find("Top").Find("Exclamation(Clone)") == null){
-                ex = Instantiate(controller.GetComponent<LevelControl>().exclamationMark, this.transform.Find("Top"), false); 
+        if (!gameOver){
+            if (stoppedCar){
+                stoppedTimer += Time.deltaTime;
             }
-        }
+
+            if (stoppedTimer > 2.0f && !haveHonked){
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(this.gameObject); 
+                haveHonked = true;
+                if (this.transform.Find("Top").Find("Exclamation(Clone)") == null){
+                    ex = Instantiate(controller.GetComponent<LevelControl>().exclamationMark, this.transform.Find("Top"), false); 
+                }
+            }
 
 
-        if (stoppedTimer > 3.0f && stoppedCar){
-            stoppedCar = false;
-            speedingUp = true;
-            SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
-            Destroy(ex);
+            if (stoppedTimer > 3.0f && stoppedCar){
+                stoppedCar = false;
+                speedingUp = true;
+                SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
+                Destroy(ex);
+            }
         }
     }
 
@@ -196,13 +198,17 @@ public class Car : MonoBehaviour
         if (collisionInfo.collider.name.Contains("Police")){
             collided = true;
         }
+        if (collisionInfo.collider.name.Contains("Taxi")){
+            collided = true;
+        }
+        if (collisionInfo.collider.name.Contains("Jeep")){
+            collided = true;
+        }
             
             
         if (collided == true){
             stoppedCar = true;
-            enabled = false;
             gameOver = true;
-            speed = 0;
             controller.GetComponent<LevelControl>().GameOver();
             GameObject.Find("AudioManager").GetComponent<AudioManager>().CrashSound(this.gameObject); 
         

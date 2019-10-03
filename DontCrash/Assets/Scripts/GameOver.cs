@@ -45,7 +45,7 @@ public class GameOver: MonoBehaviour
 
     public void ShowGameOverMenu(){
         
-        GameOverUI.SetActive(true);
+        //GameOverUI.SetActive(true);
         GameObject levelControl = GameObject.Find("LevelController");
         int points = levelControl.GetComponent<LevelControl>().score;
         

@@ -278,6 +278,8 @@ MonoBehaviour:
   copCar: {fileID: 1748497019997713921, guid: 753041b0c39d25b449ec78d92a9d717a, type: 3}
   largeCar: {fileID: 4369655639066299838, guid: 244959e5c3875cc4685c7cbc6755b549,
     type: 3}
+  cab: {fileID: 8976805892187443526, guid: 9e48795f8f87a894995682a50ab293f8, type: 3}
+  jeep: {fileID: 1287918490109056368, guid: 98b3fa86bd9e8534496179d71267186e, type: 3}
   exclamationMark: {fileID: 2990954557508753452, guid: 79cc1c793fc737c45aef69a77b622dea,
     type: 3}
   score: 0
@@ -761,7 +763,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4667436424838192, guid: 7acb114597f086c42abbcf30f06c4686, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.5
+      value: 3.486
       objectReference: {fileID: 0}
     - target: {fileID: 4667436424838192, guid: 7acb114597f086c42abbcf30f06c4686, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3315,36 +3317,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.147787, y: 5.0654497, z: 2.768518}
   m_Center: {x: -0.15206873, y: 2.5327249, z: -0.38425928}
---- !u!1 &1102861501
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1102861502}
-  m_Layer: 0
-  m_Name: CarController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1102861502
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102861501}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 474.35947, y: 270.1328, z: -217.65712}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1107169447
 GameObject:
   m_ObjectHideFlags: 0
@@ -5222,7 +5194,7 @@ PrefabInstance:
     - target: {fileID: 4177759361919382045, guid: 3c3c6f1a98941134ea94c8332196c4cb,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4177759361919382045, guid: 3c3c6f1a98941134ea94c8332196c4cb,
         type: 3}
@@ -7215,7 +7187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2060714255
 RectTransform:
   m_ObjectHideFlags: 0
