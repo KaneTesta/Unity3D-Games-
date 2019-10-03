@@ -20,19 +20,22 @@ public class LevelControl : MonoBehaviour
     public GameObject cab;
     public GameObject jeep;
     public GameObject exclamationMark;
-    private bool readyToSpawn = true;
+    public bool readyToSpawn = true;
     private Color[] carColor = new Color[] {new Color(0.02f,0.93f,1.0f,0.2f),new Color(0.14f,0.83f,0.19f,0.2f),new Color(0.78f,0.36f,0.34f,0.2f), Color.yellow, Color.black, Color.gray};
 
 
     //Game controls
     public int score = 0;
+    public int unlockedVehicles = 0;
     public int highScore;
     public bool gameOver = false;
     public Text scoreText;
     public bool nightMode = false;
 
     void Start(){
-        InvokeRepeating("IncreaseFrequency", 0f ,3f);
+        InvokeRepeating("IncreaseFrequency", 0f ,2f);
+        PlayerPrefs.SetInt("Progress",0);
+        unlockedVehicles = MaxVehicle();
     }
 
 
@@ -47,8 +50,9 @@ public class LevelControl : MonoBehaviour
         if (readyToSpawn)
         {
             float timer = Random.Range(spawnIntervalMin, spawnIntervalMax);
-            Invoke("SpawnCar", timer);
             readyToSpawn = false;
+            Invoke("SpawnCar", timer);
+
         }
 
 
@@ -65,15 +69,37 @@ public class LevelControl : MonoBehaviour
         }
     }
 
+    int MaxVehicle(){
+        int vehicles = 6;
+
+        if (PlayerPrefs.GetInt("TotalScore") > 100) {
+            vehicles += 2;
+        } 
+
+        if (PlayerPrefs.GetInt("TotalScore") > 300) {
+            vehicles += 2;
+        }
+
+        if (PlayerPrefs.GetInt("TotalScore") > 500) {
+            vehicles += 2;
+        }
+
+        if (PlayerPrefs.GetInt("TotalScore") > 700) {
+            vehicles += 2;
+        }
+
+
+        return vehicles;
+    }
     void SpawnCar()
     {
-        if (vehicleCount() < 15){
+        if (vehicleCount() < 15 && PlayerPrefs.GetInt("Progress",0) == 0){
             //Car starting position, salt is so they dont follow the same track
             int rand = UnityEngine.Random.Range(0,8);
             float salt = Random.Range(-0.1f,0.1f);
 
             //Random car type
-            int randomCarType = Random.Range(0,15);       
+            int randomCarType = Random.Range(0,unlockedVehicles);       
             
             Quaternion direction = Quaternion.identity;
             direction.eulerAngles = new Vector3(0,rotationY[rand],0);
@@ -110,9 +136,8 @@ public class LevelControl : MonoBehaviour
                     }
                 }
             }
-        }
-        readyToSpawn = true;
-
+            readyToSpawn = true;
+        } 
     }
 
     private int vehicleCount(){
@@ -140,20 +165,22 @@ public class LevelControl : MonoBehaviour
     //Do this when the game is done
     public void GameOver(){
 
-        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false && gameOver == false && GameObject.Find("MenuControllers").GetComponent<MainMenu>().ControlsUI.activeSelf == false){
+        if (GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false && gameOver == false){
             gameOver = true;
 
             // Game Over Screen
             GameObject gameOverController = GameObject.Find("MenuControllers");
             gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
+            PlayerPrefs.SetInt("TotalScore", PlayerPrefs.GetInt("TotalScore") + score);
         }
     }
 
     public void ResetGame(){
+        PlayerPrefs.SetInt("Progress",0);
         score = 0;
         scoreText.text = score.ToString();
-        spawnIntervalMax = 0.75f; //3f;
-        spawnIntervalMin = 0.25f;//2f;
+        spawnIntervalMax = 3f;
+        spawnIntervalMin = 2f;
         gameOver = false;
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
         foreach(GameObject go in allObjects){
@@ -163,10 +190,20 @@ public class LevelControl : MonoBehaviour
         }
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         scoreText.color = Color.white;
+        readyToSpawn = false;
     }
 
     public void cameraShake(){
         StartCoroutine(GameObject.Find("CameraAnchor").GetComponent<CameraShake>().Shake(0.15f, 1f));
+    }
+
+    public void ClearWorld(){
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
+        foreach(GameObject go in allObjects){
+            if (go.name.Contains("Clone")){
+                Destroy(go);
+            }
+        }
     }
 
 }

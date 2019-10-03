@@ -25,9 +25,11 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void Pause(){
-        pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
-        gameIsPaused = true;
+        if (!GameObject.Find("LevelController").GetComponent<LevelControl>().gameOver && GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf == false){
+            pauseMenuUI.SetActive(true);
+            Time.timeScale = 0f;
+            gameIsPaused = true;
+        }
     }
 
     public void Restart(){

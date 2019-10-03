@@ -18,7 +18,7 @@ public class Truck : MonoBehaviour
 
     // Global car attributes
     private float speed;
-    private int initSpeed = 7;
+    public int initSpeed = 7;
     private bool cantStop = false; // for cars that never can be stopped so player must prioritise getting them through
     private int zCoEff;
     private int xCoEff;
@@ -112,28 +112,29 @@ public class Truck : MonoBehaviour
     }
 
     void OnMouseOver () {
-        if (Input.GetMouseButtonDown(0) && !gameOver) {
-            if (speedingUp == false){
-                GameObject.Find("AudioManager").GetComponent<AudioManager>().RevSound(this.gameObject);
+        if (PlayerPrefs.GetInt("Progress",0) == 0){
+            if (Input.GetMouseButtonDown(0) && !gameOver) {
+                if (speedingUp == false){
+                    GameObject.Find("AudioManager").GetComponent<AudioManager>().RevSound(this.gameObject);
+                }
+                speedingUp = true;
+                stoppedCar = false;
+                SkidManager.GetComponent<SkidManage>().addParticles(this.gameObject);
+                SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
+                if (ex != null){
+                    Destroy(ex);
+                }
             }
-            speedingUp = true;
-            stoppedCar = false;
-            SkidManager.GetComponent<SkidManage>().addParticles(this.gameObject);
-            SkidManager.GetComponent<SkidManage>().brakeLightsOff(this.gameObject);
-            if (ex != null){
-                Destroy(ex);
+            if (Input.GetMouseButtonDown(1) && cantStop == false) {
+                if (stoppedCar == false){
+                    GameObject.Find("AudioManager").GetComponent<AudioManager>().SkidSound(this.gameObject);
+                }
+                stoppedTimer = 0.0f;
+                stoppedCar = true;
+                speedingUp = false;
+                haveHonked = false;
+                SkidManager.GetComponent<SkidManage>().brakeLightsOn(this.gameObject);
             }
-        }
-        if (Input.GetMouseButtonDown(1) && cantStop == false) {
-            if (stoppedCar == false){
-                GameObject.Find("AudioManager").GetComponent<AudioManager>().SkidSound(this.gameObject);
-            }
-            stoppedTimer = 0.0f;
-            stoppedCar = true;
-            speedingUp = false;
-            haveHonked = false;
-            SkidManager.GetComponent<SkidManage>().brakeLightsOn(this.gameObject);
-
         }
     }
     void SpeedManager() {
