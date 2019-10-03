@@ -17,9 +17,11 @@ public class LevelControl : MonoBehaviour
     public GameObject defaultCar;
     public GameObject copCar;
     public GameObject largeCar;
+    public GameObject cab;
+    public GameObject jeep;
     public GameObject exclamationMark;
     private bool readyToSpawn = true;
-    private Color[] carColor = new Color[] {new Color(0.02f,0.93f,1.0f,0.2f),new Color(0.14f,0.83f,0.19f,0.2f),new Color(0.78f,0.36f,0.34f,0.2f), Color.yellow};
+    private Color[] carColor = new Color[] {new Color(0.02f,0.93f,1.0f,0.2f),new Color(0.14f,0.83f,0.19f,0.2f),new Color(0.78f,0.36f,0.34f,0.2f), Color.yellow, Color.black, Color.gray};
 
 
     //Game controls
@@ -42,7 +44,6 @@ public class LevelControl : MonoBehaviour
             scoreText.gameObject.SetActive(false);
         }
 
-
         if (readyToSpawn)
         {
             float timer = Random.Range(spawnIntervalMin, spawnIntervalMax);
@@ -55,7 +56,7 @@ public class LevelControl : MonoBehaviour
 
     //Increase frequency of car spawn
     void IncreaseFrequency(){
-        if (spawnIntervalMin > 0.25f){
+        if (spawnIntervalMin > .25f){
             spawnIntervalMin -= 0.05f;
         }
 
@@ -66,13 +67,13 @@ public class LevelControl : MonoBehaviour
 
     void SpawnCar()
     {
-        if (vehicleCount() < 20){
+        if (vehicleCount() < 15){
             //Car starting position, salt is so they dont follow the same track
             int rand = UnityEngine.Random.Range(0,8);
             float salt = Random.Range(-0.1f,0.1f);
 
             //Random car type
-            int randomCarType = Random.Range(0,11);       
+            int randomCarType = Random.Range(0,15);       
             
             Quaternion direction = Quaternion.identity;
             direction.eulerAngles = new Vector3(0,rotationY[rand],0);
@@ -81,7 +82,7 @@ public class LevelControl : MonoBehaviour
             // Change color of body of default car
             if (randomCarType <= 6){
                 GameObject newCar = Instantiate(defaultCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-                int randomCarColor = Random.Range(0,4);
+                int randomCarColor = Random.Range(0,6);
                 foreach (Transform child in newCar.transform){
                     if (child.name == "Top" || child.name == "Bottom"){
                         child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
@@ -91,16 +92,26 @@ public class LevelControl : MonoBehaviour
                 GameObject newCop = Instantiate(copCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
                 GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCop);
             } else if (randomCarType <= 10){
-                int randomCarColor = Random.Range(0,4);
+                int randomCarColor = Random.Range(0,6);
                 GameObject truck = Instantiate(largeCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
                 foreach (Transform child in truck.transform){
                     if (child.name == "Top" || child.name == "Bottom"){
                         child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
                     }
                 }
+            } else if (randomCarType <= 12){
+                GameObject taxi = Instantiate(cab, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+            } else if (randomCarType <= 14){
+                GameObject jj = Instantiate(jeep, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+                int randomCarColor = Random.Range(0,6);
+                foreach (Transform child in jj.transform){
+                    if (child.name == "Top" || child.name == "Bottom"){
+                        child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
+                    }
+                }
             }
-            readyToSpawn = true;
         }
+        readyToSpawn = true;
 
     }
 
@@ -141,8 +152,8 @@ public class LevelControl : MonoBehaviour
     public void ResetGame(){
         score = 0;
         scoreText.text = score.ToString();
-        spawnIntervalMax = 3f;
-        spawnIntervalMin = 2f;
+        spawnIntervalMax = 0.75f; //3f;
+        spawnIntervalMin = 0.25f;//2f;
         gameOver = false;
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
         foreach(GameObject go in allObjects){
