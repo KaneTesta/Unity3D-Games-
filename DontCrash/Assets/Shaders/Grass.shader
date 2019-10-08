@@ -4,6 +4,8 @@ Shader "Custom/Grass"
 	// Based off of a grass Geometry shader created by Roystan Ross
 	// https://roystan.net/articles/grass-shader.html
 
+	// Geometry shader based off of the above Grass shader, I also added Phong shading to it since it was staying the same colour at night
+
 
     Properties
     {
@@ -11,25 +13,17 @@ Shader "Custom/Grass"
 		[Header(Shading)]
         _TopColor("Top Color", Color) = (1,1,1,1)
 		_BottomColor("Bottom Color", Color) = (1,1,1,1)
-		_TranslucentGain("Translucent Gain", Range(0,1)) = 0.5
-		_BendRotationRandom("Bend Rotation Random", Range(0, 1)) = 0.8
 		_BladeWidth("Blade Width", Float) = 0.05
-		_BladeWidthRandom("Blade Width Random", Float) = 0.02
 		_BladeHeight("Blade Height", Float) = 0.5
-		_BladeHeightRandom("Blade Height Random", Float) = 0.2
 		_TessellationUniform("Tessellation Uniform", Range(1, 64)) = 12
 		
 		//Wind Variables
 		_WindDistortionMap("Wind Distortion Map", 2D) = "white" {}
 		_WindFrequency("Wind Frequency", Vector) = (0.05, 0.05, 0, 0)
-		_WindStrength("Wind Strength", Float) = 1
 
-		//Phong Stuff
-		_ReflectionCoefficient("Reflection Coefficient", Range(0,1)) = 0.3
+		//Toon Stuff
 		_MainTint("Diffuse Tint", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
-		_Specular("Specular Power", Range(0,100)) = 1
-
 
     }
 
@@ -39,21 +33,17 @@ Shader "Custom/Grass"
 	#include "/CustomTessellation.cginc"
 	
 	//Grass Variables
-	float _BendRotationRandom;
 	float _BladeHeight;
-	float _BladeHeightRandom;	
 	float _BladeWidth;
-	float _BladeWidthRandom;
 
 	//Wind Variables
 	sampler2D _WindDistortionMap;
 	float4 _WindDistortionMap_ST;
 	float2 _WindFrequency;
-	float _WindStrength;
 
 
 
-	// Simple noise function, sourced from http://answers.unity.com/answers/624136/view.html
+// Simple noise function, sourced from http://answers.unity.com/answers/624136/view.html
 	// Returns a number in the 0...1 range.
 	float rand(float3 co)
 	{
@@ -114,19 +104,19 @@ Shader "Custom/Grass"
 		
 		//Ensure every blade of grass is facing a random direction
 		float3x3 facingRotationMatrix = AngleAxis3x3(rand(pos) * UNITY_TWO_PI, float3(0, 0, 1));
-		float3x3 bendRotationMatrix = AngleAxis3x3(rand(pos.zzx) * _BendRotationRandom * UNITY_PI * 0.5, float3(-1, 0, 0));
+		float3x3 bendRotationMatrix = AngleAxis3x3(rand(pos.zzx)  * UNITY_PI * 0.5, float3(-1, 0, 0));
 		
 		// WIND STUFF
 		float2 uv = pos.xz * _WindDistortionMap_ST.xy + _WindDistortionMap_ST.zw + _WindFrequency * _Time.y;
-		float2 windSample = (tex2Dlod(_WindDistortionMap, float4(uv, 0, 0)).xy * 2 - 1) * _WindStrength;
+		float2 windSample = (tex2Dlod(_WindDistortionMap, float4(uv, 0, 0)).xy * 2 - 1);
 		float3 wind = normalize(float3(windSample.x, windSample.y, 0));
 		float3x3 windRotation = AngleAxis3x3(UNITY_PI * windSample, wind);
 		float3x3 transformationMatrix = mul(mul(mul(tangentToLocal, windRotation), facingRotationMatrix), bendRotationMatrix);
 		
 
 		//Properties to randomise width and height of grass blade
-		float height = (rand(pos.zyx) * 2 - 1) * _BladeHeightRandom + _BladeHeight;
-		float width = (rand(pos.xzy) * 2 - 1) * _BladeWidthRandom + _BladeWidth;
+		float height = (rand(pos.zyx) * 2 - 1) * _BladeHeight + _BladeHeight;
+		float width = (rand(pos.xzy) * 2 - 1) * _BladeWidth + _BladeWidth;
 		
 		// Pos adds an offset to the triangle vertices so theyre spread out
 		triStream.Append(VertexOutput(pos + mul(transformationMatrix, float3(width, 0, 0)), float2(0, 0)));
