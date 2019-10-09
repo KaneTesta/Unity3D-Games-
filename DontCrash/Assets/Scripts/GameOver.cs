@@ -32,11 +32,6 @@ public class GameOver: MonoBehaviour
 
     }
 
-    public void Restart(){
-        GameOverUI.SetActive(false);
-        GameObject.Find("LevelController").GetComponent<LevelControl>().ResetGame();
-    }
-
     public void ShowMainMenu(){
         MainMenuUI.SetActive(true);
         GameOverUI.SetActive(false);

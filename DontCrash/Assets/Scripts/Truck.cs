@@ -14,11 +14,11 @@ public class Truck : MonoBehaviour
 
 
     //Car attributes that are altered as time goes on
-    public float speedMultiplier = 1.0f;
+    private float speedMultiplier = 1.0f;
 
     // Global car attributes
     private float speed;
-    public int initSpeed = 7;
+    public int initSpeed = 3;
     private bool cantStop = false; // for cars that never can be stopped so player must prioritise getting them through
     private int zCoEff;
     private int xCoEff;
@@ -56,6 +56,7 @@ public class Truck : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        speedMultiplier = GameObject.Find("LevelController").GetComponent<LevelControl>().speedMultiplier;
         Vector3 newPos = this.transform.position;
         newPos.x = newPos.x + xCoEff*speed*speedMultiplier*Time.deltaTime;
         newPos.z = newPos.z + zCoEff*speed*speedMultiplier*Time.deltaTime;
@@ -144,7 +145,7 @@ public class Truck : MonoBehaviour
         }
 
         else if (stoppedCar && speed > 0){
-            speed -= 0.5f;
+            speed -= 0.4f;
             SkidManager.GetComponent<SkidManage>().addSkid(this.gameObject);
         } 
 
@@ -155,8 +156,12 @@ public class Truck : MonoBehaviour
 
         //if car is slowing after boost
         else if (speed > initSpeed){
-            speed -= 0.5f;
+            speed -= 0.4f;
             speedingUp = false;
+        }
+
+        if (speed < 0){
+            speed = 0;
         }
     }
     void StoppedCheck() {

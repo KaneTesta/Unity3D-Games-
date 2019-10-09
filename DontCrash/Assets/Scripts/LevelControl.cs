@@ -30,12 +30,16 @@ public class LevelControl : MonoBehaviour
     public int highScore;
     public bool gameOver = false;
     public Text scoreText;
+    public Text highScoreText;
     public bool nightMode = false;
+    public float speedMultiplier = 1.0f;
 
     void Start(){
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
         InvokeRepeating("IncreaseFrequency", 0f ,2f);
         PlayerPrefs.SetInt("Progress",0);
         unlockedVehicles = MaxVehicle();
+        highScoreText.text = "High Score: " + highScore.ToString();
     }
 
 
@@ -47,12 +51,11 @@ public class LevelControl : MonoBehaviour
             scoreText.gameObject.SetActive(false);
         }
 
-        if (readyToSpawn)
+        if (readyToSpawn && vehicleCount() <= 15)
         {
             float timer = Random.Range(spawnIntervalMin, spawnIntervalMax);
             readyToSpawn = false;
             Invoke("SpawnCar", timer);
-
         }
 
 
@@ -60,16 +63,20 @@ public class LevelControl : MonoBehaviour
 
     //Increase frequency of car spawn
     void IncreaseFrequency(){
-        if (spawnIntervalMin > .25f){
+        if (spawnIntervalMin > 1f){
             spawnIntervalMin -= 0.05f;
         }
 
-        if (spawnIntervalMax > 1f){
+        if (spawnIntervalMax > 1.5f){
             spawnIntervalMax -= 0.05f;
+        }
+
+        if (speedMultiplier < 3f){
+            speedMultiplier += 0.01f;
         }
     }
 
-    int MaxVehicle(){
+    public int MaxVehicle(){
         int vehicles = 6;
 
         if (PlayerPrefs.GetInt("TotalScore") > 100) {
@@ -93,51 +100,49 @@ public class LevelControl : MonoBehaviour
     }
     void SpawnCar()
     {
-        if (vehicleCount() < 15 && PlayerPrefs.GetInt("Progress",0) == 0){
-            //Car starting position, salt is so they dont follow the same track
-            int rand = UnityEngine.Random.Range(0,8);
-            float salt = Random.Range(-0.1f,0.1f);
+        //Car starting position, salt is so they dont follow the same track
+        int rand = UnityEngine.Random.Range(0,8);
+        float salt = Random.Range(-0.1f,0.1f);
 
-            //Random car type
-            int randomCarType = Random.Range(0,unlockedVehicles);       
-            
-            Quaternion direction = Quaternion.identity;
-            direction.eulerAngles = new Vector3(0,rotationY[rand],0);
-
+        //Random car type
+        int randomCarType = Random.Range(0,unlockedVehicles);       
         
-            // Change color of body of default car
-            if (randomCarType <= 6){
-                GameObject newCar = Instantiate(defaultCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-                int randomCarColor = Random.Range(0,6);
-                foreach (Transform child in newCar.transform){
-                    if (child.name == "Top" || child.name == "Bottom"){
-                        child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
-                    }
-                }
-            } else if (randomCarType <= 8){
-                GameObject newCop = Instantiate(copCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-                GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCop);
-            } else if (randomCarType <= 10){
-                int randomCarColor = Random.Range(0,6);
-                GameObject truck = Instantiate(largeCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-                foreach (Transform child in truck.transform){
-                    if (child.name == "Top" || child.name == "Bottom"){
-                        child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
-                    }
-                }
-            } else if (randomCarType <= 12){
-                GameObject taxi = Instantiate(cab, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-            } else if (randomCarType <= 14){
-                GameObject jj = Instantiate(jeep, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
-                int randomCarColor = Random.Range(0,6);
-                foreach (Transform child in jj.transform){
-                    if (child.name == "Top" || child.name == "Bottom"){
-                        child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
-                    }
+        Quaternion direction = Quaternion.identity;
+        direction.eulerAngles = new Vector3(0,rotationY[rand],0);
+
+    
+        // Change color of body of default car
+        if (randomCarType <= 6){
+            GameObject newCar = Instantiate(defaultCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+            int randomCarColor = Random.Range(0,6);
+            foreach (Transform child in newCar.transform){
+                if (child.name == "Top" || child.name == "Bottom"){
+                    child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
                 }
             }
-            readyToSpawn = true;
-        } 
+        } else if (randomCarType <= 8){
+            GameObject newCop = Instantiate(copCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().HonkSound(newCop);
+        } else if (randomCarType <= 10){
+            int randomCarColor = Random.Range(0,6);
+            GameObject truck = Instantiate(largeCar, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+            foreach (Transform child in truck.transform){
+                if (child.name == "Top" || child.name == "Bottom"){
+                    child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
+                }
+            }
+        } else if (randomCarType <= 12){
+            GameObject taxi = Instantiate(cab, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+        } else if (randomCarType <= 14){
+            GameObject jj = Instantiate(jeep, new Vector3(startingX[rand]+salt, startingY, startingZ[rand]+salt),direction);
+            int randomCarColor = Random.Range(0,6);
+            foreach (Transform child in jj.transform){
+                if (child.name == "Top" || child.name == "Bottom"){
+                    child.GetComponent<Renderer>().material.color = carColor[randomCarColor];
+                }
+            }
+        }
+        readyToSpawn = true;
     }
 
     private int vehicleCount(){
@@ -159,6 +164,7 @@ public class LevelControl : MonoBehaviour
 
         if (score > highScore){
             scoreText.color = Color.green;
+            highScoreText.text = "High Score: " + score.ToString();
         }
     }
 
@@ -173,6 +179,7 @@ public class LevelControl : MonoBehaviour
             gameOverController.GetComponent<GameOver>().ShowGameOverMenu();
             PlayerPrefs.SetInt("TotalScore", PlayerPrefs.GetInt("TotalScore") + score);
         }
+
     }
 
     public void ResetGame(){
@@ -182,15 +189,12 @@ public class LevelControl : MonoBehaviour
         spawnIntervalMax = 3f;
         spawnIntervalMin = 2f;
         gameOver = false;
-        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
-        foreach(GameObject go in allObjects){
-            if (go.name.Contains("Clone")){
-                Destroy(go);
-            }
-        }
+        ClearWorld();
         highScore = PlayerPrefs.GetInt("HighScore", 0);
+        highScoreText.text = "High Score: " + highScore.ToString();
         scoreText.color = Color.white;
-        readyToSpawn = false;
+        speedMultiplier = 1f;
+        unlockedVehicles = MaxVehicle();
     }
 
     public void cameraShake(){

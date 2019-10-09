@@ -69,7 +69,7 @@ Material:
     - _Parallax: 0.02
     - _ReflectionCoefficient: 0.3
     - _SmoothnessTextureChannel: 0
-    - _Specular: 1
+    - _Specular: 13.3
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
@@ -78,4 +78,6 @@ Material:
     - _Color: {r: 0.34117648, g: 0.7254902, b: 0.5019608, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainTint: {r: 0.083303675, g: 0.4528302, b: 0.23790152, a: 1}
+    - _PointLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _PointLightPosition: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}

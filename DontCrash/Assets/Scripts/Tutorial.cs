@@ -14,6 +14,14 @@ public class Tutorial : MonoBehaviour
     public Text tutorialText;
     public Text tutorialText2;
 
+    public bool tut = false;
+
+    void Start(){
+        if (PlayerPrefs.GetInt("HighScore",0)==0){
+            tut = true;
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -29,7 +37,7 @@ public class Tutorial : MonoBehaviour
 
     //Handle tutorial
     void tutorial(){
-        if (inZone == true && scoreChanged){
+        if (inZone == true && scoreChanged && tut && !GameObject.Find("MenuControllers").GetComponent<MainMenu>().MenuUI.activeSelf){
             if ((score+1) == 1){
                 Time.timeScale = 0f;
                 tutorialText.text = "Left-click cars to speed them up";

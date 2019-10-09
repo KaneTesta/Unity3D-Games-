@@ -1,4 +1,4 @@
-﻿Shader "PhongShader" {
+﻿Shader "ToonShader" {
 
 
 	Properties{
@@ -18,19 +18,19 @@
 		float4 _MainTint;
 		float _Specular;
 
-		//Phong shading: 
 		//Inputs: Incoming Light vector, camera direction vector
 		// Based off https://docplayer.net/61098261-Introduction-to-surface-shaders-prof-aaron-lanterman-school-of-electrical-and-computer-engineering-georgia-institute-of-technology.html
-		// due to being able to choose materials as I cant change vertex colours from imported assets
-
-		float4 LightingBlinnPhong(SurfaceOutput a, float3 lightVec, float3 camVec,
+		// My new ToonShader allows me to use colors of materials rather than vertices
+		// This is because I can't change vertex colors of imported assets
+		
+		float4 Toon(SurfaceOutput a, float3 lightVector, float3 cameraVector,
 			float3 normal, float4 color,float atten) {
 
-			lightVec = normalize(lightVec);
-			camVec = normalize(camVec);
+			lightVector = normalize(lightVector);
+			cameraVector = normalize(cameraVector);
 
-			float diffuse = dot(normal, lightVec);
-			float specular = pow(saturate(dot(normalize(lightVec + camVec), normal)), _Specular) * color.a;
+			float diffuse = dot(normal, lightVector);
+			float specular = pow(saturate(dot(normalize(lightVector + cameraVector), normal)), _Specular) * color.a;
 
 			float4 v;
 			v.rgb = (color.rgb * _MainTint.rgb * diffuse +
